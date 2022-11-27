@@ -202,10 +202,7 @@ pub fn call<RT: Runtime>(
                     system.send(
                         &system.rt.message().receiver(),
                         Method::InvokeContractDelegate as u64,
-                        Some(
-                            IpldBlock::serialize_cbor(&params)
-                                .map_err(|e| StatusCode::InternalError(e.to_string()))?,
-                        ),
+                        Some(IpldBlock::serialize_cbor(&params)?),
                         TokenAmount::from(&value),
                     )
                 }

@@ -67,16 +67,7 @@ pub fn create(
 
     let nonce = system.increment_nonce();
     let params = CreateParams { code: input_data.to_vec(), nonce };
-    create_init(
-        stack,
-        system,
-        Some(
-            IpldBlock::serialize_cbor(&params)
-                .map_err(|e| StatusCode::InternalError(e.to_string()))?,
-        ),
-        CREATE_METHOD_NUM,
-        value,
-    )
+    create_init(stack, system, Some(IpldBlock::serialize_cbor(&params)?), CREATE_METHOD_NUM, value)
 }
 
 pub fn create2(
@@ -115,10 +106,7 @@ pub fn create2(
     create_init(
         stack,
         system,
-        Some(
-            IpldBlock::serialize_cbor(&params)
-                .map_err(|e| StatusCode::InternalError(e.to_string()))?,
-        ),
+        Some(IpldBlock::serialize_cbor(&params)?),
         CREATE2_METHOD_NUM,
         endowment,
     )

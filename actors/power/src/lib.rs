@@ -104,13 +104,10 @@ impl Actor {
             .send(
                 &INIT_ACTOR_ADDR,
                 ext::init::EXEC_METHOD,
-                Some(
-                    IpldBlock::serialize_cbor(&init::ExecParams {
-                        code_cid: miner_actor_code_cid,
-                        constructor_params,
-                    })
-                    .map_err(|e| actor_error!(serialization, e.to_string()))?,
-                ),
+                Some(IpldBlock::serialize_cbor(&init::ExecParams {
+                    code_cid: miner_actor_code_cid,
+                    constructor_params,
+                })?),
                 value,
             )?
             .deserialize()?;
@@ -263,10 +260,7 @@ impl Actor {
             // Can assume delta is one since cron is invoked every epoch.
             st.update_smoothed_estimate(1);
 
-            Ok(Some(
-                IpldBlock::serialize_cbor(&BigIntSer(&st.this_epoch_raw_byte_power))
-                    .map_err(|e| actor_error!(serialization, e.to_string()))?,
-            ))
+            Ok(Some(IpldBlock::serialize_cbor(&BigIntSer(&st.this_epoch_raw_byte_power))?))
         })?;
 
         // Update network KPA in reward actor
@@ -585,14 +579,11 @@ impl Actor {
 
         let mut failed_miner_crons = Vec::new();
         for event in cron_events {
-            let params = Some(
-                IpldBlock::serialize_cbor(&ext::miner::DeferredCronEventParams {
-                    event_payload: event.callback_payload.bytes().to_owned(),
-                    reward_smoothed: rewret.this_epoch_reward_smoothed.clone(),
-                    quality_adj_power_smoothed: st.this_epoch_qa_power_smoothed.clone(),
-                })
-                .map_err(|e| actor_error!(serialization, e.to_string()))?,
-            );
+            let params = Some(IpldBlock::serialize_cbor(&ext::miner::DeferredCronEventParams {
+                event_payload: event.callback_payload.bytes().to_owned(),
+                reward_smoothed: rewret.this_epoch_reward_smoothed.clone(),
+                quality_adj_power_smoothed: st.this_epoch_qa_power_smoothed.clone(),
+            })?);
             let res = rt.send(
                 &event.miner_addr,
                 ext::miner::ON_DEFERRED_CRON_EVENT_METHOD,

@@ -97,6 +97,7 @@ pub struct InitAccountParams {
     #[serde(with = "strict_bytes")]
     pub pubkey: [u8; SECP_PUB_LEN],
 }
+
 impl Cbor for InitAccountParams {}
 
 #[derive(Serialize_tuple, Deserialize_tuple, Debug, PartialEq, Eq)]
@@ -159,10 +160,7 @@ fn create_actor(
         .send(
             &INIT_ACTOR_ADDR,
             ext::init::EXEC4_METHOD,
-            Some(
-                IpldBlock::serialize_cbor(&init_params)
-                    .map_err(|e| ActorError::serialization(e.to_string()))?,
-            ),
+            Some(IpldBlock::serialize_cbor(&init_params)?),
             rt.message().value_received(),
         )?
         .deserialize()?;
@@ -188,6 +186,7 @@ fn resolve_caller(rt: &mut impl Runtime) -> Result<EthAddress, ActorError> {
 }
 
 pub struct EamActor;
+
 impl EamActor {
     pub fn constructor(rt: &mut impl Runtime, _args: Option<IpldBlock>) -> Result<(), ActorError> {
         // TODO: NO_PARAMS

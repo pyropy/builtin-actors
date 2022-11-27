@@ -51,6 +51,7 @@ pub enum Method {
 
 /// Reward Actor
 pub struct Actor;
+
 impl Actor {
     /// Constructor for Reward actor
     fn constructor(rt: &mut impl Runtime, args: Option<IpldBlock>) -> Result<(), ActorError> {
@@ -151,10 +152,7 @@ impl Actor {
         let res = rt.send(
             &Address::new_id(miner_id),
             ext::miner::APPLY_REWARDS_METHOD,
-            Some(
-                IpldBlock::serialize_cbor(&reward_params)
-                    .map_err(|e| actor_error!(serialization, e.to_string()))?,
-            ),
+            Some(IpldBlock::serialize_cbor(&reward_params)?),
             total_reward.clone(),
         );
         if let Err(e) = res {
