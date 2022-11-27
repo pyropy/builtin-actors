@@ -86,18 +86,22 @@ impl Actor {
         rt: &mut impl Runtime,
         args: Option<IpldBlock>,
     ) -> Result<CreateMinerReturn, ActorError> {
+        println!("decoding");
         let params: CreateMinerParams = decode_params!(args);
+
+        println!("decoded");
         rt.validate_immediate_caller_type(&[Type::Account, Type::Multisig])?;
         let value = rt.message().value_received();
 
-        let constructor_params = RawBytes::serialize(ext::miner::MinerConstructorParams {
-            owner: params.owner,
-            worker: params.worker,
-            window_post_proof_type: params.window_post_proof_type,
-            peer_id: params.peer,
-            multi_addresses: params.multiaddrs,
-            control_addresses: Default::default(),
-        })?;
+        let constructor_params =
+            Some(IpldBlock::serialize_cbor(&ext::miner::MinerConstructorParams {
+                owner: params.owner,
+                worker: params.worker,
+                window_post_proof_type: params.window_post_proof_type,
+                peer_id: params.peer,
+                multi_addresses: params.multiaddrs,
+                control_addresses: Default::default(),
+            })?);
 
         let miner_actor_code_cid = rt.get_code_cid_for_type(Type::Miner);
         let ext::init::ExecReturn { id_address, robust_address } = rt
@@ -149,6 +153,7 @@ impl Actor {
             })?;
             Ok(())
         })?;
+        println!("12345");
         Ok(CreateMinerReturn { id_address, robust_address })
     }
 

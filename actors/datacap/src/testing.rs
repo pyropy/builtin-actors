@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 use fil_actors_runtime::MessageAccumulator;
 
-use crate::{State, DATACAP_GRANULARITY};
+use crate::State;
 
 pub struct StateSummary {
     pub balances: HashMap<ActorID, TokenAmount>,
@@ -22,7 +22,7 @@ pub fn check_state_invariants<BS: Blockstore>(
 ) -> (StateSummary, MessageAccumulator) {
     let acc = MessageAccumulator::default();
     acc.require(state.governor.protocol() == Protocol::ID, "governor must be ID address");
-    let _r = state.token.check_invariants(store, DATACAP_GRANULARITY);
+    let _r = state.token.check_invariants(store);
 
     // TODO: replace this with the state summary returned by the token library
     // after that's implemented (expected in 1.2.0)
