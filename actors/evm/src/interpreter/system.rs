@@ -66,10 +66,11 @@ impl<'r, RT: Runtime> System<'r, RT> {
     }
 
     /// Load the actor from state.
-    pub fn load(rt: &'r mut RT, readonly: bool) -> Result<Self, ActorError>
+    pub fn load(rt: &'r mut RT) -> Result<Self, ActorError>
     where
         RT::Blockstore: Clone,
     {
+        let read_only = rt.read_only();
         let store = rt.store().clone();
         let state_root = rt.get_state_root()?;
         let state: State = store
@@ -84,7 +85,7 @@ impl<'r, RT: Runtime> System<'r, RT> {
             nonce: state.nonce,
             saved_state_root: Some(state_root),
             bytecode: Some(state.bytecode),
-            readonly,
+            readonly: read_only,
         })
     }
 
@@ -107,6 +108,17 @@ impl<'r, RT: Runtime> System<'r, RT> {
         let result = self.rt.send(to, method, params, value)?;
         self.reload()?;
         Ok(result)
+    }
+
+    /// Send a message in "read-only" mode (for staticcall).
+    pub fn send_read_only(
+        &mut self,
+        to: &Address,
+        method: MethodNum,
+        params: RawBytes,
+    ) -> Result<RawBytes, ActorError> {
+        self.flush()?;
+        self.rt.send_read_only(to, method, params)
     }
 
     /// Flush the actor state (bytecode, nonce, and slots).
