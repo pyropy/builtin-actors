@@ -98,7 +98,7 @@ native_account:
             evm::Method::GetBytecode as u64,
             Default::default(),
             TokenAmount::zero(),
-            RawBytes::serialize(&bytecode_cid).unwrap(),
+            RawBytes::serialize(bytecode_cid).unwrap(),
             ExitCode::OK,
         );
 
@@ -187,7 +187,7 @@ native_actor:
         evm::Method::GetBytecode as u64,
         Default::default(),
         TokenAmount::zero(),
-        RawBytes::serialize(&bytecode_cid).unwrap(),
+        RawBytes::serialize(bytecode_cid).unwrap(),
         ExitCode::OK,
     );
 
@@ -278,7 +278,7 @@ invalid_address:
         evm::Method::GetBytecode as u64,
         Default::default(),
         TokenAmount::zero(),
-        RawBytes::serialize(&bytecode_cid).unwrap(),
+        RawBytes::serialize(bytecode_cid).unwrap(),
         ExitCode::OK,
     );
 
