@@ -39,6 +39,7 @@ calibrationnet = []
 devnet = []
 testing = []
 testing-fake-proofs = []
+altnet = []
 
 [workspace]
 members = [
