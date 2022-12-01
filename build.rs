@@ -42,6 +42,8 @@ fn network_name() -> String {
         Some("butterflynet")
     } else if cfg!(feature = "wallaby") {
         Some("wallaby")
+    } else if cfg!(feature = "altnet") {
+        Some("altnet")
     } else if cfg!(feature = "calibrationnet") {
         Some("calibrationnet")
     } else if cfg!(feature = "devnet") {
